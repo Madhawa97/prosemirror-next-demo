@@ -3,6 +3,7 @@ import { EditorView } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
+import { GapCursor } from 'prosemirror-gapcursor';
 
 type MarkNames = 'bold' | 'italic' | 'underline';
 type ActiveMarks = Partial<Record<MarkNames, boolean>>;
@@ -45,6 +46,28 @@ const Toolbar:React.FC<{editorView: EditorView | null, schema: Schema}> = ({ edi
     toggleMark(mark)(state, dispatch);
   };
 
+  const testGapCursor = () => {
+    if (!editorView) return;
+    
+    const { state, dispatch } = editorView;
+    const { doc } = state;
+
+    const pos = doc.resolve(28).after();
+    const $pos = doc.resolve(pos);
+    
+    console.log('Testing GapCursor at position:', pos);
+    console.log('Node at position:', $pos.parent.type.name);
+    
+    const gapCursor = new GapCursor($pos);
+    console.log('GapCursor created:', gapCursor);
+    
+    const tr = state.tr.setSelection(gapCursor);
+    dispatch(tr);
+    editorView.focus();
+    
+    console.log('GapCursor selection set!');
+  };
+
   return (
     <div className="toolbar">
       <button 
@@ -70,6 +93,19 @@ const Toolbar:React.FC<{editorView: EditorView | null, schema: Schema}> = ({ edi
       >
         <u>U</u>
       </button>
+
+      <span style={{ width: '10px', display: 'inline-block' }} />
+      
+      <button 
+        className="toolbar-button"
+        onClick={testGapCursor}
+        title="Test GapCursor"
+        style={{ fontWeight: 'bold', fontSize: '14px', backgroundColor: '#e3f2fd' }}
+      >
+        🔵 Test
+      </button>
+      
+      <span style={{ width: '10px', display: 'inline-block' }} />
       
       <button 
         className="toolbar-button"

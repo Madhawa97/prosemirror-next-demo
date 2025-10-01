@@ -68,13 +68,16 @@ const ProseMirrorEditor = ({ content = '', onChange }: ProseMirrorEditorProps) =
 
     const initialContent = content.trim() ? [schema.text(content)] : [];
     const doc = schema.node('doc', null, [
-      schema.node('paragraph', null, initialContent)
+      schema.node('paragraph', null, initialContent.length ? initialContent : [schema.text('First paragraph - click the 🔵 Test button to see the gapcursor')]),
+      schema.node('paragraph', null, [schema.text('Second paragraph - the gapcursor appears as a blinking line')]),
+      schema.node('paragraph', null, [schema.text('Third paragraph - use arrow keys to navigate')])
     ]);
 
     const state = EditorState.create({
       doc,
       plugins: [
         history(),
+        gapCursor(),
         keymap({
           ...baseKeymap,
           'Mod-b': toggleMark(schema.marks.bold),
@@ -84,7 +87,6 @@ const ProseMirrorEditor = ({ content = '', onChange }: ProseMirrorEditorProps) =
           'Mod-y': redo,
           'Mod-Shift-z': redo
         }),
-        gapCursor(),
       ]
     });
 
