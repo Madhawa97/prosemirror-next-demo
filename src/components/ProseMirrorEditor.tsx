@@ -8,6 +8,7 @@ import { baseKeymap, toggleMark } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
 import { history, undo, redo } from 'prosemirror-history';
 import Toolbar from './Toolbar';
+import { gapCursor } from 'prosemirror-gapcursor';
 
 const createSchema = () => {
   return new Schema({
@@ -82,7 +83,8 @@ const ProseMirrorEditor = ({ content = '', onChange }: ProseMirrorEditorProps) =
           'Mod-z': undo,
           'Mod-y': redo,
           'Mod-Shift-z': redo
-        })
+        }),
+        gapCursor(),
       ]
     });
 
